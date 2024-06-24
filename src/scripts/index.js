@@ -1,16 +1,36 @@
 import '../pages/index.css';
 
-import {initialCards, createCard, deleteCard, cardLikeToggle} from './cards.js';
-import {openPopupImg, openPopupDef, closePopupDef, closePopup, closeOverlayPopup, closeEscPopup} from './modal.js';
- // @todo: DOM узлы
- const placesList = document.querySelector('.places__list');
+import {initialCards} from './cards.js';
+import {createCard, deleteCard, cardLikeToggle} from './card.js';
+import {openPopupDef, closePopupDef, addClosePopupButtonListener, addClosePopupByOverlayListener, addCloseEscListener} from './modal.js';
 
+// @todo: DOM узлы
+ const placesList = document.querySelector('.places__list');
  // переменные для открытия модальных окон
 const allPopup = document.querySelectorAll('.popup');
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 const editPopup = document.querySelector('.popup_type_edit');
+const popupwithImage = document.querySelector('.popup_type_image');
+const popupImage = document.querySelector('.popup__image');
 const newCard = document.querySelector('.popup_type_new-card');
+// Находим форму в DOM
+const editFormElement = editPopup.querySelector('.popup__form');// Воспользуйтесь методом querySelector()
+// Находим поля формы в DOM
+const nameInput = editFormElement.querySelector('.popup__input_type_name');// Воспользуйтесь инструментом .querySelector()
+const jobInput = editFormElement.querySelector('.popup__input_type_description');// Воспользуйтесь инструментом .querySelector()
+// Выберите элементы, куда должны быть вставлены значения полей
+const profileTitle = document.querySelector('.profile__title');
+const profileDescription = document.querySelector('.profile__description');
+
+//функция вызова попапа картинки
+function openPopupImg(item) {
+    openPopupDef(popupwithImage);
+    popupImage.src = item.link;
+    popupImage.alt = item.name;
+    const popupTitle = document.querySelector('.popup__caption');
+    popupTitle.textContent = item.name;
+}
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach(function(item) {
@@ -21,25 +41,24 @@ initialCards.forEach(function(item) {
 //функции для открытия конкретных окон
 editButton.addEventListener('click', () => {
     openPopupDef(editPopup);
+    nameInput.value = profileTitle.textContent;
+    jobInput.value = profileDescription.textContent;
 });
+
 addButton.addEventListener('click', () => {
     openPopupDef(newCard);
 });
 
 //функции для закрытия конкретных окон
-allPopup.forEach(closeOverlayPopup);
-allPopup.forEach(closePopup);  
-allPopup.forEach(closeEscPopup);
 
-// Находим форму в DOM
-const formElement = editPopup.querySelector('.popup__form');// Воспользуйтесь методом querySelector()
-// Находим поля формы в DOM
-const nameInput = formElement.querySelector('.popup__input_type_name');// Воспользуйтесь инструментом .querySelector()
-const jobInput = formElement.querySelector('.popup__input_type_description');// Воспользуйтесь инструментом .querySelector()
+allPopup.forEach(popup => {
+    addClosePopupButtonListener(popup);
+    addClosePopupByOverlayListener(popup)
+})
 
 // Обработчик «отправки» формы, хотя пока
 // она никуда отправляться не будет
-function handleFormSubmit(evt) {
+function editFormSubmit(evt) {
     evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
                                                 // Так мы можем определить свою логику отправки.
                                                 // О том, как это делать, расскажем позже.
@@ -47,19 +66,16 @@ function handleFormSubmit(evt) {
     // Получите значение полей jobInput и nameInput из свойства value
 const nameValue = nameInput.value;
 const jobValue = jobInput.value;
-    // Выберите элементы, куда должны быть вставлены значения полей
-const profileTitle = document.querySelector('.profile__title');
-const profileDescription = document.querySelector('.profile__description');
     // Вставьте новые значения с помощью textContent
 profileTitle.textContent = nameValue;
 profileDescription.textContent = jobValue;
-formElement.reset();
+editFormElement.reset();
 closePopupDef(editPopup);
 }
 
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
-formElement.addEventListener('submit', handleFormSubmit); 
+editFormElement.addEventListener('submit', editFormSubmit); 
 
 
 
@@ -72,19 +88,19 @@ function cardFormSubmit(evt) {
     evt.preventDefault(); 
     const cardNameValue = cardNameInput.value;
     const urlValue = urlInput.value;
-    const cardValue = [];
-    cardValue.name = cardNameValue;
-    cardValue.link = urlValue;
-    initialCards.unshift(cardValue);
+    const cardValue = {
+        name: cardNameValue,
+        link: urlValue,
+     };
 
     formCard.reset();
     closePopupDef(newCard);
 
-    function cardCreate(item) {
+    function addCard(item) {
         const cardElement = createCard(item, deleteCard, cardLikeToggle, openPopupImg);
         placesList.prepend(cardElement); 
     };
-
-    cardCreate(initialCards[0]);
+console.log(cardValue);
+    addCard(cardValue);
 }
 formCard.addEventListener('submit', cardFormSubmit); 
