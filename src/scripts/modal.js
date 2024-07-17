@@ -32,3 +32,12 @@ export function addCloseEscListener(evt)  {
         closePopupDef(document.querySelector('.popup_is-opened')); 
     } 
 }
+
+export function renderLoading(isLoading, button) {
+    if (isLoading) {
+        button.textContent = 'Сохранение...';
+      }
+      else {
+        button.textContent = 'Сохранить';
+      }
+}
