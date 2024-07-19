@@ -29,15 +29,12 @@ export function createCard(item, userId, deleteSubmit, cardLikeToggle, openPopup
   return itemCard;
 };
 
+let cardToDeleteId, cardToDelete;
+
 export function deleteSubmit(deletePopup, cardId, card) {
   openPopupDef(deletePopup);
-  addClosePopupButtonListener(deletePopup);
-  addClosePopupByOverlayListener(deletePopup);
-  deleteForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    deleteCard(cardId, card);
-    closePopupDef(deletePopup);
-});
+  cardToDelete = card;
+  cardToDeleteId = cardId;
 }
 
 // @todo: Функция удаления карточки
@@ -48,20 +45,19 @@ export function deleteCard(cardId, card) {
     .catch(handleErr)
 };
 
+deleteForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  deleteCard(cardToDeleteId, cardToDelete);
+  closePopupDef(deletePopup);
+});
+
   // Карточка лайкнута
   export function cardLikeToggle(element, cardId, likesCountElement) {
-    if (element.classList.contains('card__like-button_is-active')) {
-        unlikeCard(cardId).then(data => {
-            element.classList.toggle('card__like-button_is-active');
-            likesCountElement.textContent = data.likes.length;
-          }) 
-          .catch(handleErr)
-    } else {
-        likeCard(cardId).then(data => {
-            element.classList.toggle('card__like-button_is-active');
-            likesCountElement.textContent = data.likes.length;
-          }) 
-          .catch(handleErr) 
-    }
+    const likeMethod = element.classList.contains('card__like-button_is-active')?unlikeCard(cardId):likeCard(cardId);
+    likeMethod.then(data => {
+      element.classList.toggle('card__like-button_is-active');
+      likesCountElement.textContent = data.likes.length;
+    }) 
+    .catch(handleErr)
   }
     

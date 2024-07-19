@@ -2,8 +2,8 @@ import '../pages/index.css';
 
 import {createCard, deleteCard, cardLikeToggle, deleteSubmit} from './card.js';
 import {openPopupDef, closePopupDef, addClosePopupButtonListener, addClosePopupByOverlayListener, renderLoading} from './modal.js';
-import {validConfiguration, enableValidation, resetFormValidation, resetButtonState} from './validation.js';
-import {getInitialCards, getUserData, addUser, handleErr, addNewCard, avatarUser} from './api.js';
+import {enableValidation, resetFormValidation, resetButtonState} from './validation.js';
+import {getInitialCards, getUserData, updateUser, handleErr, addNewCard, avatarUser} from './api.js';
 // @todo: DOM узлы
  const placesList = document.querySelector('.places__list');
  // переменные для открытия модальных окон
@@ -71,7 +71,7 @@ addButton.addEventListener('click', () => {
     openPopupDef(newCard);
     cardNameInput.value = "";
     urlInput.value = "";
-    resetButtonState(newCard, validConfiguration);
+    resetFormValidation(newCard, validConfiguration);
 });
 
 avatarButton.addEventListener('click', () => {
@@ -93,14 +93,17 @@ function editFormSubmit(evt) {
     renderLoading(true, saveButtonEdit);
     const nameValue = nameInput.value;
     const jobValue = jobInput.value;
-    // Вставьте новые значения с помощью textContent
-    profileTitle.textContent = nameValue;
-    profileDescription.textContent = jobValue;
     editFormElement.reset();
-    addUser(nameValue, jobValue).finally(() => {
+    updateUser(nameValue, jobValue).then((userData) => {
+         // Вставьте новые значения с помощью textContent
+        profileTitle.textContent = userData.name;
+        profileDescription.textContent = userData.about;
+        closePopupDef(editPopup);
+    })
+        .catch(handleErr)
+        .finally(() => {
         renderLoading(false, saveButtonEdit);
     });
-    closePopupDef(editPopup);
 }
 editFormElement.addEventListener('submit', editFormSubmit); 
 
@@ -119,7 +122,6 @@ function avatarFormSubmit(evt) {
     .finally(() => {
         renderLoading(false, saveButtonAvatar);
     });
-
 }
 avatarForm.addEventListener('submit', avatarFormSubmit); 
 
@@ -147,6 +149,16 @@ function cardFormSubmit(evt) {
     });
 }
 formCard.addEventListener('submit', cardFormSubmit); 
+
+
+export const validConfiguration = ({
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_inactive',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__input-error_active'
+  });
 
 enableValidation(validConfiguration);
 

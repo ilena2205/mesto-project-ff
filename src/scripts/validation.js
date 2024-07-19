@@ -1,13 +1,4 @@
 
-export const validConfiguration = ({
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_inactive',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__input-error_active'
-  });
-
 export const showInputError = (formElement, inputElement, errorMessage, validConfiguration) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(validConfiguration.inputErrorClass);
@@ -40,6 +31,7 @@ export const isValid = (formElement, inputElement, validConfiguration) => {
 export const setEventListeners = (formElement, validConfiguration) => {
     const inputList = Array.from(formElement.querySelectorAll(validConfiguration.inputSelector));
     const buttonElement = formElement.querySelector(validConfiguration.submitButtonSelector);
+    toggleButtonState(inputList, buttonElement, validConfiguration);
     inputList.forEach((inputElement) => {
         inputElement.addEventListener('input', () => {
             isValid(formElement, inputElement, validConfiguration);
@@ -59,7 +51,7 @@ export const enableValidation = (validConfiguration) => {
 
 export const hasInvalidInput = (inputList) => {
     return inputList.some((inputElement) => {
-        return (!inputElement.validity.valid || inputElement.validity.patternMismatch);
+        return !inputElement.validity.valid;
     })
 };
 
@@ -78,13 +70,4 @@ export const resetFormValidation = (formElement, validConfiguration) => {
     inputList.forEach((inputElement) => {
         hideInputError(formElement, inputElement, validConfiguration);
     });
-    const buttonElement = formElement.querySelector(validConfiguration.submitButtonSelector);
-        buttonElement.disabled = false;
-        buttonElement.classList.remove(validConfiguration.inactiveButtonClass);
-};
-
-export const resetButtonState = (formElement, validConfiguration) => {
-    const buttonElement = formElement.querySelector(validConfiguration.submitButtonSelector);
-    buttonElement.disabled = true;
-    buttonElement.classList.add(validConfiguration.inactiveButtonClass);
 };

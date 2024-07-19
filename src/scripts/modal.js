@@ -34,10 +34,5 @@ export function addCloseEscListener(evt)  {
 }
 
 export function renderLoading(isLoading, button) {
-    if (isLoading) {
-        button.textContent = 'Сохранение...';
-      }
-      else {
-        button.textContent = 'Сохранить';
-      }
+    button.textContent = isLoading ? 'Сохранение...' : 'Сохранить'; 
 }

@@ -22,7 +22,6 @@ export const getInitialCards = () => {
         headers: config.headers
       })
       .then(handleRes)
-      .catch(handleErr);
 }
 
 export const getUserData = () => {
@@ -30,10 +29,9 @@ export const getUserData = () => {
         headers: config.headers
       })
       .then(handleRes)
-      .catch(handleErr);
 }
 
-export const addUser = (nameValue, jobValue) => {
+export const updateUser = (nameValue, jobValue) => {
     return fetch(`${config.baseUrl}/users/me`, {
         method: 'PATCH',
         headers: config.headers,
@@ -42,7 +40,7 @@ export const addUser = (nameValue, jobValue) => {
           about: jobValue
         })
       })
-      .catch(handleErr);
+      .then(handleRes)
 }
 
 export const addNewCard = (cardNameValue, urlValue) => {
@@ -55,7 +53,6 @@ export const addNewCard = (cardNameValue, urlValue) => {
         })
       })
     .then(handleRes)
-    .catch(handleErr);
 }
 
 export const apiDeleteCard = (cardId) => {
@@ -64,7 +61,6 @@ export const apiDeleteCard = (cardId) => {
         headers: config.headers,
     })
     .then(handleRes)
-    .catch(handleErr);
 }
 
 export const unlikeCard = (cardId) => {
@@ -73,7 +69,6 @@ export const unlikeCard = (cardId) => {
         headers: config.headers,
     })
     .then(handleRes)
-    .catch(handleErr);
 }
 
 export const likeCard = (cardId) => {
@@ -82,7 +77,6 @@ export const likeCard = (cardId) => {
         headers: config.headers,
     })
     .then(handleRes)
-    .catch(handleErr);
 }
 
 export const avatarUser = (avatarUrl) => {
@@ -94,6 +88,5 @@ export const avatarUser = (avatarUrl) => {
       })
     })
     .then(handleRes)
-    .catch(handleErr);
 }
 
